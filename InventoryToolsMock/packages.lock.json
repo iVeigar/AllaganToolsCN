@@ -826,7 +826,7 @@
       "ecommons": {
         "type": "Project"
       },
-      "inventorytools": {
+      "InventoryToolsCN": {
         "type": "Project",
         "dependencies": {
           "Autofac": "[8.0.0, )",

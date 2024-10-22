@@ -12,7 +12,7 @@ jobs:
   release:
     uses: iVeigar/MyDalamudPlugins/.github/workflows/reusable_create_release.yml@master
     with:
-      internal_name: InventoryTools
+      internal_name: InventoryToolsCN
       solution_name: InventoryTools
       build_configuration: Release
       personal_plugin_repo: iVeigar/MyDalamudPlugins
