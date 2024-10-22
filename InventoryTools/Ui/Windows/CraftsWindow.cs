@@ -19,18 +19,19 @@ using CriticalCommonLib.Sheets;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Colors;
-using ImGuiNET;
-using InventoryTools.Extensions;
-using InventoryTools.Logic;
-using InventoryTools.Logic.Settings;
-using InventoryTools.Ui.Widgets;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+using ECommons.Reflection;
+using ImGuiNET;
+using InventoryTools.Extensions;
 using InventoryTools.Lists;
+using InventoryTools.Logic;
 using InventoryTools.Logic.Filters;
+using InventoryTools.Logic.Settings;
 using InventoryTools.Mediator;
 using InventoryTools.Services;
 using InventoryTools.Services.Interfaces;
+using InventoryTools.Ui.Widgets;
 using Microsoft.Extensions.Logging;
 using ImGuiUtil = OtterGui.ImGuiUtil;
 using InventoryItem = FFXIVClientStructs.FFXIV.Client.Game.InventoryItem;
@@ -175,7 +176,8 @@ namespace InventoryTools.Ui
         private HoverButton _importTcIcon = new();
         private HoverButton _filtersIcon = new();
         private HoverButton _menuIcon = new();
-
+        private HoverButton _exportArtisanIcon = new();
+        private HoverButton _restockIcon = new();
 
         private TeamCraftImportWindow? _teamCraftImportWindow;
         private List<FilterConfiguration>? _filters;
@@ -413,7 +415,7 @@ namespace InventoryTools.Ui
 
                     ImGui.Separator();
 
-                    if (ImGui.BeginMenu("Copy List Contents"))
+                    if (ImGui.BeginMenu("复制列表内容"))
                     {
                         if (ImGui.MenuItem("Craft List (All)"))
                         {
@@ -453,15 +455,15 @@ namespace InventoryTools.Ui
                             _clipboardService.CopyToClipboard(tcString);
                             _chatUtilities.Print("The craft list's gatherables were copied to your clipboard.");
                         }
-                        if (ImGui.MenuItem("Craft List (Missing Gatherables)"))
+                        if (ImGui.MenuItem("生产列表 - 采集品所需数量"))
                         {
                             var searchResults = SelectedConfiguration.CraftList.GetFlattenedMergedMaterials()
                                 .Where(c => c.Item.CanBeGathered && !c.IsOutputItem)
                                 .ToList();
 
-                            var tcString = _importExportService.ToTCString(searchResults, TCExportMode.Missing);
+                            var tcString = _importExportService.ToTCString(searchResults, TCExportMode.NeededPreUpdate);
                             _clipboardService.CopyToClipboard(tcString);
-                            _chatUtilities.Print("The craft list's gatherables were copied to your clipboard.");
+                            _chatUtilities.Print("生产列表需要的采集品已复制到剪贴板。");
                         }
                         if (ImGui.MenuItem("Retainer/Bag List"))
                         {
@@ -1351,6 +1353,36 @@ namespace InventoryTools.Ui
             {
                 if (bottomBarChild.Success)
                 {
+                    if (DalamudReflector.TryGetDalamudPlugin("Artisan", out var pl, false, true))
+                    {
+                        if (_exportArtisanIcon.Draw(ImGuiService.GetImageTexture("export2").ImGuiHandle, "bb_export_artisan"))
+                        {
+                            var list_name_output = $"AllaganTools - {filterConfiguration.Name}";
+                            var non_output = string.Join(Environment.NewLine, filterConfiguration.CraftList.GetFlattenedMergedMaterials().Where(c => !c.IsOutputItem && c.QuantityNeededPreUpdate > 0).Select(c => $"{c.QuantityNeededPreUpdate}x {c.Name}").Reverse());
+                            var output = string.Join(Environment.NewLine, filterConfiguration.CraftList.CraftItems.Where(c => c.IsOutputItem).Select(c => $"{c.QuantityRequired}x {c.Name}"));
+                            pl.Call("ImportTeamcraftList", [list_name_output, non_output, output]);
+                            var plui = pl.GetFoP("PluginUi");
+                            plui?.SetFoP("IsOpen", true);
+                            plui?.SetFoP("OpenWindow", 4);
+                        }
+                    }
+                    ImGuiUtil.HoverTooltip("在Artisan新建列表");
+                    ImGui.SameLine();
+                    if (DalamudReflector.TryGetDalamudPlugin("RestockFromRetainer", out var _, false, true))
+                    {
+                        if (_restockIcon.Draw(ImGuiService.GetImageTexture("export").ImGuiHandle, "bb_retrieve"))
+                        {
+                            List<string> items = [];
+                            foreach (var craftItem in filterConfiguration.CraftList.GetFlattenedMergedMaterials().Where(c => c.QuantityWillRetrieve > 0))
+                            {
+                                items.Add($"{craftItem.ItemId}:{craftItem.QuantityWillRetrieve}");
+                            }
+                            Service.Commands.ProcessCommand("/restock " + string.Join(' ', items));
+                        }
+                    }
+                    ImGuiUtil.HoverTooltip("一键从雇员补货");
+                    ImGui.SameLine();
+
                     if (_marketIcon.Draw(ImGuiService.GetImageTexture("refresh-web").ImGuiHandle, "bb_market"))
                     {
                         var activeCharacter = _characterMonitor.ActiveCharacter;

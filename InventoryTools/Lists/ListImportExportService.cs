@@ -17,6 +17,7 @@ public enum TCExportMode
 {
     Required,
     Missing,
+    NeededPreUpdate
 }
 
 public class ListImportExportService
@@ -138,6 +139,9 @@ public class ListImportExportService
             {
                 case TCExportMode.Missing:
                     qty = craftItem.QuantityMissingOverall;
+                    break;
+                case TCExportMode.NeededPreUpdate:
+                    qty = craftItem.QuantityNeededPreUpdate;
                     break;
             }
 

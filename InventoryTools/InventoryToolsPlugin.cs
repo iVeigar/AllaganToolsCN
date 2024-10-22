@@ -24,6 +24,7 @@ using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using ECommons;
 using InventoryTools.Commands;
 using InventoryTools.Host;
 using InventoryTools.Hotkeys;
@@ -72,6 +73,7 @@ namespace InventoryTools
             _pluginLog = pluginLog;
             PluginInterface = pluginInterface;
             _service = PluginInterface.Create<Service>()!;
+            ECommonsMain.Init(PluginInterface, this, ECommons.Module.DalamudReflector);
             CreateHost();
 
             Start();
@@ -478,6 +480,7 @@ namespace InventoryTools
                 Service.Log.Debug("Starting dispose of InventoryToolsPlugin");
                 _service?.Dispose();
                 _service = null;
+                ECommonsMain.Dispose();
                 PluginInterface = null;
             }
         }
