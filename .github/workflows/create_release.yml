@@ -16,5 +16,5 @@ jobs:
       solution_name: InventoryTools
       build_configuration: Release
       personal_plugin_repo: iVeigar/MyDalamudPlugins
-      personal_plugin_repo_branch: main
+      personal_plugin_repo_branch: master
     secrets: inherit
