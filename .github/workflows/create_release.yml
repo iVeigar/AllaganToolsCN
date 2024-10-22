@@ -1,0 +1,20 @@
+name: Create Release and Update Repository
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: iVeigar/MyDalamudPlugins/.github/workflows/reusable_create_release.yml@master
+    with:
+      internal_name: InventoryTools
+      solution_name: InventoryTools
+      build_configuration: Release
+      personal_plugin_repo: iVeigar/MyDalamudPlugins
+      personal_plugin_repo_branch: main
+    secrets: inherit
