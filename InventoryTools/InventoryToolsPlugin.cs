@@ -21,7 +21,6 @@ using DalaMock.Shared.Classes;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Interface.ImGuiFileDialog;
-using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using ECommons;
@@ -75,7 +74,6 @@ namespace InventoryTools
             _service = PluginInterface.Create<Service>()!;
             ECommonsMain.Init(PluginInterface, this, ECommons.Module.DalamudReflector);
             CreateHost();
-
             Start();
 
         }
@@ -298,6 +296,7 @@ namespace InventoryTools
                 builder.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
                 builder.RegisterType<HostedUniversalisConfiguration>().AsSelf().As<IHostedUniversalisConfiguration>()
                     .SingleInstance();
+                builder.RegisterType<RestockService>().SingleInstance();
 
                 //Transient
                 builder.RegisterType<FilterState>();

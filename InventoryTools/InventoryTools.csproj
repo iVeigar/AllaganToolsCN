@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>1.8.0.20</Version>
+        <Version>1.8.1.0</Version>
         <AssemblyName>InventoryToolsCN</AssemblyName>
             <NoWarn>IDE0003</NoWarn>
         <OutputType>Library</OutputType>

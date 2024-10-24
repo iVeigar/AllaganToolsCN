@@ -59,6 +59,7 @@ namespace InventoryTools.Ui
         private readonly PopupService _popupService;
         private readonly IClipboardService _clipboardService;
         private readonly IKeyState _keyState;
+        private readonly RestockService _restockService;
         private IEnumerable<IMenuWindow> _menuWindows;
         private ThrottleDispatcher _throttleDispatcher;
 
@@ -69,7 +70,7 @@ namespace InventoryTools.Ui
             ICharacterMonitor characterMonitor, IFileDialogManager fileDialogManager, IGameUiManager gameUiManager,
             IChatUtilities chatUtilities, ExcelCache excelCache, ListImportExportService importExportService,
             CraftWindowLayoutSetting layoutSetting, IComponentContext context, PopupService popupService,
-            IClipboardService clipboardService, IKeyState keyState) : base(logger, mediator, imGuiService, configuration, "Crafts Window")
+            IClipboardService clipboardService, IKeyState keyState, RestockService restockService) : base(logger, mediator, imGuiService, configuration, "Crafts Window")
         {
             _tableService = tableService;
             _configuration = configuration;
@@ -89,6 +90,7 @@ namespace InventoryTools.Ui
             _popupService = popupService;
             _clipboardService = clipboardService;
             _keyState = keyState;
+            _restockService = restockService;
             Flags = ImGuiWindowFlags.MenuBar;
         }
         public override void Initialize()
@@ -1368,17 +1370,10 @@ namespace InventoryTools.Ui
                     }
                     ImGuiUtil.HoverTooltip("在Artisan新建列表");
                     ImGui.SameLine();
-                    if (DalamudReflector.TryGetDalamudPlugin("RestockFromRetainer", out var _, false, true))
+                    if (_restockIcon.Draw(ImGuiService.GetImageTexture("export").ImGuiHandle, "bb_retrieve"))
                     {
-                        if (_restockIcon.Draw(ImGuiService.GetImageTexture("export").ImGuiHandle, "bb_retrieve"))
-                        {
-                            List<string> items = [];
-                            foreach (var craftItem in filterConfiguration.CraftList.GetFlattenedMergedMaterials().Where(c => c.QuantityWillRetrieve > 0))
-                            {
-                                items.Add($"{craftItem.ItemId}:{craftItem.QuantityWillRetrieve}");
-                            }
-                            Service.Commands.ProcessCommand("/restock " + string.Join(' ', items));
-                        }
+                        Dictionary<uint, int> items = filterConfiguration.CraftList.GetFlattenedMergedMaterials().Where(c => c.QuantityWillRetrieve > 0).Select(c => (c.ItemId, (int)c.QuantityWillRetrieve)).ToDictionary();
+                        _restockService.RestockFromRetainers(items);
                     }
                     ImGuiUtil.HoverTooltip("一键从雇员补货");
                     ImGui.SameLine();
