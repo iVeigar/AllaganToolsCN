@@ -1,4 +1,4 @@
-﻿{
+{
     "Author": "Critical_Impact, iVeigar",
     "Name": "Allagan Tools (CN)",
     "Punchline": "Get organized in FFXIV, easily locate/show where to sort items, plan your crafting, and search for mobs, duties, airships, and submarines!",
@@ -6,7 +6,7 @@
     "Tags": [ "Inventory", "Sorting", "Filtering" ],
     "InternalName": "InventoryToolsCN",
     "RepoUrl": "https://github.com/iVeigar/AllaganToolsCN",
-    "AssemblyVersion": "1.8.1.0",
+    "AssemblyVersion": "1.8.1.1",
     "LoadPriority": 0,
     "CanUnloadAsync": false,
     "IconUrl": "https://raw.githubusercontent.com/Critical-Impact/InventoryTools/main/InventoryTools/Images/icon.png",

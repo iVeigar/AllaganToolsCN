@@ -417,7 +417,7 @@ namespace InventoryTools.Ui
 
                     ImGui.Separator();
 
-                    if (ImGui.BeginMenu("¸´ÖÆÁĞ±íÄÚÈİ"))
+                    if (ImGui.BeginMenu("å¤åˆ¶åˆ—è¡¨å†…å®¹"))
                     {
                         if (ImGui.MenuItem("Craft List (All)"))
                         {
@@ -457,7 +457,7 @@ namespace InventoryTools.Ui
                             _clipboardService.CopyToClipboard(tcString);
                             _chatUtilities.Print("The craft list's gatherables were copied to your clipboard.");
                         }
-                        if (ImGui.MenuItem("Éú²úÁĞ±í - ²É¼¯Æ·ËùĞèÊıÁ¿"))
+                        if (ImGui.MenuItem("ç”Ÿäº§åˆ—è¡¨ - é‡‡é›†å“æ‰€éœ€æ•°é‡"))
                         {
                             var searchResults = SelectedConfiguration.CraftList.GetFlattenedMergedMaterials()
                                 .Where(c => c.Item.CanBeGathered && !c.IsOutputItem)
@@ -465,7 +465,7 @@ namespace InventoryTools.Ui
 
                             var tcString = _importExportService.ToTCString(searchResults, TCExportMode.NeededPreUpdate);
                             _clipboardService.CopyToClipboard(tcString);
-                            _chatUtilities.Print("Éú²úÁĞ±íĞèÒªµÄ²É¼¯Æ·ÒÑ¸´ÖÆµ½¼ôÌù°å¡£");
+                            _chatUtilities.Print("ç”Ÿäº§åˆ—è¡¨éœ€è¦çš„é‡‡é›†å“å·²å¤åˆ¶åˆ°å‰ªè´´æ¿ã€‚");
                         }
                         if (ImGui.MenuItem("Retainer/Bag List"))
                         {
@@ -1368,14 +1368,14 @@ namespace InventoryTools.Ui
                             plui?.SetFoP("OpenWindow", 4);
                         }
                     }
-                    ImGuiUtil.HoverTooltip("ÔÚArtisanĞÂ½¨ÁĞ±í");
+                    ImGuiUtil.HoverTooltip("åœ¨Artisanæ–°å»ºåˆ—è¡¨");
                     ImGui.SameLine();
                     if (_restockIcon.Draw(ImGuiService.GetImageTexture("export").ImGuiHandle, "bb_retrieve"))
                     {
                         Dictionary<uint, int> items = filterConfiguration.CraftList.GetFlattenedMergedMaterials().Where(c => c.QuantityWillRetrieve > 0).Select(c => (c.ItemId, (int)c.QuantityWillRetrieve)).ToDictionary();
                         _restockService.RestockFromRetainers(items);
                     }
-                    ImGuiUtil.HoverTooltip("Ò»¼ü´Ó¹ÍÔ±²¹»õ");
+                    ImGuiUtil.HoverTooltip("ä¸€é”®ä»é›‡å‘˜è¡¥è´§");
                     ImGui.SameLine();
 
                     if (_marketIcon.Draw(ImGuiService.GetImageTexture("refresh-web").ImGuiHandle, "bb_market"))
